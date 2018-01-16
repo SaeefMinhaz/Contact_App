@@ -2,7 +2,6 @@ package com.example.user.contentproviderapp;
 
 import android.Manifest;
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.pm.PackageManager;
@@ -13,10 +12,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>{
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int PERMISSION_CONTACTS = 200;
     private static int LOADER_CONTACTS = 100;
@@ -36,19 +34,33 @@ public class MainActivity extends AppCompatActivity implements android.support.v
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS},PERMISSION_CONTACTS);
         } else {
-            getSupportLoaderManager().initLoader(1,null,this);
+            getLoaderManager().initLoader(LOADER_CONTACTS,null,this);
         }
-
     }
 
     @Override
-    public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri CONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        return new android.support.v4.content.CursorLoader(this,CONTENT_URI,null,null,null,null);
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+       switch (requestCode){
+           case PERMISSION_CONTACTS:
+               if (grantResults.length >0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                   getLoaderManager().initLoader(LOADER_CONTACTS,null,this);
+               }
+               break;
+       }
     }
 
     @Override
-    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+        if(id==LOADER_CONTACTS){
+            Uri CONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            return new CursorLoader(this,CONTENT_URI,null,null,null, ContactsContract.Contacts.SORT_KEY_PRIMARY);
+        }else {
+            return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         StringBuilder sb = new StringBuilder();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
@@ -60,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements android.support.v
     }
 
     @Override
-    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
 //    https://stackoverflow.com/questions/29915919/permission-denial-opening-provider-com-android-providers-contacts-contactsprovi/35522711
