@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -40,41 +41,43 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-       switch (requestCode){
-           case PERMISSION_CONTACTS:
-               if (grantResults.length >0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                   getLoaderManager().initLoader(LOADER_CONTACTS,null,this);
-               }
-               break;
-       }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        if(id==LOADER_CONTACTS){
-            Uri CONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-            return new CursorLoader(this,CONTENT_URI,null,null,null, ContactsContract.Contacts.SORT_KEY_PRIMARY);
-        }else {
-            return null;
+        switch (requestCode){
+            case PERMISSION_CONTACTS:
+                if (grantResults.length >0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                    getLoaderManager().initLoader(LOADER_CONTACTS,null,this);
+                }else {
+                    Toast.makeText(this,"DURE GIA MOR",Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        StringBuilder sb = new StringBuilder();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()){
-            sb.append("\n" + cursor.getString(cursor.getColumnIndex(DISPLAY_NAME)));
-            sb.append(":" + cursor.getString(cursor.getColumnIndex(NUMBER)));
-            cursor.moveToNext();
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+            if(id==LOADER_CONTACTS){
+                Uri CONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                return new CursorLoader(this,CONTENT_URI,null,null,null, ContactsContract.Contacts.SORT_KEY_PRIMARY);
+            }else {
+                return null;
+            }
         }
-        outTV.setText(sb);
-    }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            StringBuilder sb = new StringBuilder();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()){
+                sb.append("\n" + cursor.getString(cursor.getColumnIndex(DISPLAY_NAME)));
+                sb.append(":" + cursor.getString(cursor.getColumnIndex(NUMBER)));
+                cursor.moveToNext();
+            }
+            outTV.setText(sb);
+        }
 
-    }
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+        }
+
 
 //    https://stackoverflow.com/questions/29915919/permission-denial-opening-provider-com-android-providers-contacts-contactsprovi/35522711
 //    https://androidkennel.org/android-loaders-tutorial/
