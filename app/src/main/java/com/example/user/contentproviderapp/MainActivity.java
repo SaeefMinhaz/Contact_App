@@ -12,6 +12,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,14 +26,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static String DISPLAY_NAME = ContactsContract.Contacts.DISPLAY_NAME;
     public static String NUMBER = ContactsContract.CommonDataKinds.Phone.NUMBER;
 
-    TextView outTV = null;
+    Button getDataBtn;
+
+    RecyclerView contactsRV;
+    ContactsAdapter contactsAdapter;
+    LinearLayoutManager linearLayoutManager;
+    Cursor data;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        outTV = (TextView) findViewById(R.id.outTV);
+        contactsRV = findViewById(R.id.contactsRV);
+        contactsRV.setHasFixedSize(true);
+        linearLayoutManager = new LinearLayoutManager(this);
+        contactsRV.setLayoutManager(linearLayoutManager);
+        contactsAdapter = new ContactsAdapter(data,this);
+//        contactsRV.setAdapter(contactsAdapter);
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS},PERMISSION_CONTACTS);
@@ -64,18 +78,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            StringBuilder sb = new StringBuilder();
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()){
-                sb.append("\n" + cursor.getString(cursor.getColumnIndex(DISPLAY_NAME)));
-                sb.append(":" + cursor.getString(cursor.getColumnIndex(NUMBER)));
-                cursor.moveToNext();
-            }
-            outTV.setText(sb);
-        }
+//            StringBuilder sb = new StringBuilder();
+//            cursor.moveToFirst();
+//            while (!cursor.isAfterLast()){
+//                sb.append("\n" + cursor.getString(cursor.getColumnIndex(DISPLAY_NAME)));
+//                sb.append(":" + cursor.getString(cursor.getColumnIndex(NUMBER)));
+//                cursor.moveToNext();
+//            }
+//            outTV.setText(sb);
+
+            contactsRV.setAdapter(new ContactsAdapter(data,this));
+
+    }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
+
         }
 
 
