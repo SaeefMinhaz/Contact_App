@@ -2,7 +2,9 @@ package com.example.user.contentproviderapp;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public ContactsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contacts_list,parent,false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contacts_list,parent,true);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
@@ -38,8 +40,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @Override
     public void onBindViewHolder(ContactsAdapter.ViewHolder holder, int position) {
 
-        holder.contactNameTV.setText(dataCursor.getPosition());
-        holder.contactNumberTV.setText(dataCursor.getColumnName(position));
+        holder.contactNameTV.setText(dataCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+        Log.w("name","dataCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)");
+        holder.contactNumberTV.setText(dataCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
     }
 
     @Override
@@ -47,17 +50,17 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         return (dataCursor==null)?0 : dataCursor.getCount();
     }
 
-//    public Cursor swapCursor(Cursor cursor) {
-//        if (dataCursor == cursor) {
-//            return null;
-//        }
-//        Cursor oldCursor = dataCursor;
-//        this.dataCursor = cursor;
-//        if (cursor != null) {
-//            this.notifyDataSetChanged();
-//        }
-//        return oldCursor;
-//    }
+    public Cursor swapCursor(Cursor cursor) {
+        if (dataCursor == cursor) {
+            return null;
+        }
+        Cursor oldCursor = dataCursor;
+        this.dataCursor = cursor;
+        if (cursor != null) {
+            this.notifyDataSetChanged();
+        }
+        return oldCursor;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
