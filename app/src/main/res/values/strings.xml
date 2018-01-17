@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Content Provider App</string>
+
+    //    https://stackoverflow.com/questions/29915919/permission-denial-opening-provider-com-android-providers-contacts-contactsprovi/35522711
+    //    https://androidkennel.org/android-loaders-tutorial/
 </resources>

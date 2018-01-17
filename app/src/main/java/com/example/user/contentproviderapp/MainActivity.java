@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,15 +28,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static String DISPLAY_NAME = ContactsContract.Contacts.DISPLAY_NAME;
     public static String NUMBER = ContactsContract.CommonDataKinds.Phone.NUMBER;
 
-    Button getDataBtn;
-//    TextView contactsTV;
 
     RecyclerView contactsRV;
     ContactsAdapter contactsAdapter;
     LinearLayoutManager linearLayoutManager;
     Cursor data;
 
-    List<CursorModel> cursorModelList = new ArrayList<>();
+    ArrayList cursorModelList = new ArrayList<>();
+    CursorModel cursorModel;
 
 
 
@@ -50,9 +48,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         contactsRV.setHasFixedSize(true);
         linearLayoutManager = new LinearLayoutManager(this);
         contactsRV.setLayoutManager(linearLayoutManager);
-        contactsAdapter = new ContactsAdapter(data,this);
-//        contactsTV = findViewById(R.id.contactsTV);
-        contactsRV.setAdapter(contactsAdapter);
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS},PERMISSION_CONTACTS);
@@ -85,29 +80,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//            StringBuilder sb = new StringBuilder();
-//            cursor.moveToFirst();
-//            while (!cursor.isAfterLast()){
-//                sb.append("\n" + cursor.getString(cursor.getColumnIndex(DISPLAY_NAME)));
-//                sb.append(":" + cursor.getString(cursor.getColumnIndex(NUMBER)));
-//                cursor.moveToNext();
-//            }
-//            contactsTV.setText(sb);
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            if (cursor.getCount()>0){
+                while (cursor.moveToNext()){
 
-            contactsAdapter.swapCursor(data);
+                    int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
+
+                    if (hasPhoneNumber > 0){
+                        String contactName = cursor.getString(cursor.getColumnIndex(DISPLAY_NAME));
+                        String contactNumber = cursor.getString(cursor.getColumnIndex(NUMBER));
+
+                        cursorModel = new CursorModel();
+
+                        cursorModel.setContactName(contactName);
+                        cursorModel.setContactNumber(contactNumber);
+                    }
+                    cursorModelList.add(cursorModel);
+                }
+                contactsAdapter = new ContactsAdapter(data,this,cursorModelList);
+                contactsRV.setAdapter(contactsAdapter);
+            }
 
     }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-            contactsAdapter.swapCursor(null);
         }
-
-
-//    https://stackoverflow.com/questions/29915919/permission-denial-opening-provider-com-android-providers-contacts-contactsprovi/35522711
-//    https://androidkennel.org/android-loaders-tutorial/
-
-
-
 }
