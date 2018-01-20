@@ -1,9 +1,7 @@
 package com.example.user.contentproviderapp;
 
-import android.widget.CheckBox;
-
 /**
- * Created by USER on 1/17/2018.
+ * Created by SHOVON on 1/17/2018.
  */
 
 public class CursorModel {
@@ -29,11 +27,4 @@ public class CursorModel {
         ContactNumber = contactNumber;
     }
 
-    public Boolean getSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(Boolean selected) {
-        isSelected = selected;
-    }
 }
