@@ -7,27 +7,25 @@
     android:orientation="vertical"
     tools:context="com.example.user.contentproviderapp.MainActivity">
 
-    <Button
-        android:id="@+id/getDataBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Get contact list"/>
-
-    <TextView
-        android:id="@+id/contactsTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contactsRV"
-        android:layout_below="@+id/getDataBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     </android.support.v7.widget.RecyclerView>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true">
 
+        <Button
+            android:id="@+id/getDataBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use this contact "/>
 
-
+    </RelativeLayout>
 
 </RelativeLayout>

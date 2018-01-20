@@ -21,5 +21,10 @@
         android:layout_below="@+id/contactNameTV" />
 
 
+   <RadioButton
+       android:id="@+id/selectionStateRB"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentRight="true"/>
 
 </RelativeLayout>

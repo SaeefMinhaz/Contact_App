@@ -6,6 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     Cursor dataCursor;
     Context context;
     View view;
+    private int lastSelectedPosition = -1;
 
 
     public ContactsAdapter(Cursor dataCursor, Context context, ArrayList<CursorModel> modelData) {
@@ -38,17 +42,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ContactsAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ContactsAdapter.ViewHolder holder, final int position) {
 
         holder.contactNameTV.setText(modelData.get(position).getContactName());
         holder.contactNumberTV.setText(modelData.get(position).getContactNumber());
 
-        holder.contactsRowRL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context,""+modelData.get(position).getContactNumber(),Toast.LENGTH_SHORT).show();
-            }
-        });
+        holder.selectionStateRB.setChecked(lastSelectedPosition == position);
+
     }
 
     @Override
@@ -61,12 +61,24 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         TextView contactNameTV;
         TextView contactNumberTV;
         RelativeLayout contactsRowRL;
+        RadioButton selectionStateRB;
 
         public ViewHolder(View itemView) {
             super(itemView);
             contactNameTV = itemView.findViewById(R.id.contactNameTV);
             contactNumberTV = itemView.findViewById(R.id.contactNumberTV);
             contactsRowRL = itemView.findViewById(R.id.contactsRowRL);
+            selectionStateRB = itemView.findViewById(R.id.selectionStateRB);
+
+            selectionStateRB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    lastSelectedPosition = getAdapterPosition();
+                    notifyDataSetChanged();
+
+                    Toast.makeText(context,""+modelData.get(lastSelectedPosition).getContactName(),Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }
